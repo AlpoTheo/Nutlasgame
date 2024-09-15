@@ -2,21 +2,16 @@ using UnityEngine;
 
 public class Cat_Walk : MonoBehaviour
 {
-    private Animator animator;   // Animator bileşeni
-    private Rigidbody2D rb;      // Rigidbody2D bileşeni
-    private Vector2 movement;    // Hareket vektörü
+    private Animator animator;   // Animator bile�eni
+    private Rigidbody2D rb;      // Rigidbody2D bile�eni
+    private Vector2 movement;    // Hareket vekt�r�
 
-    public float moveSpeed = 5f; // Hareket hızı
-    public float jumpForce = 10f; // Zıplama kuvveti
-    private bool isGrounded = true; // Karakterin yerde olup olmadığını kontrol etmek
-
-    public Transform groundCheck; // Yerde kontrol noktası
-    public float groundCheckRadius = 0.2f; // Kontrol noktası yarıçapı
-    public LayerMask groundLayer; // Yerin hangi katman olduğunu belirlemek
+    public float moveSpeed = 2f; // Hareket h�z�
 
     // Start is called before the first frame update
     void Start()
     {
+        // Rigidbody ve Animator bile�enlerini al
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
     }
@@ -24,52 +19,35 @@ public class Cat_Walk : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // Yatay hareket girişini al
+        // Kullan�c�dan yatay eksende giri� al
         movement.x = Input.GetAxisRaw("Horizontal");
 
-        // Zıplama girişini kontrol et
-        if (Input.GetButtonDown("Jump") && isGrounded)
-        {
-            Jump();
-        }
-
-        // Yürüyüş animasyonunu kontrol et
+        // Y�r�y�� animasyonunu kontrol et
         if (movement.x != 0)
         {
-            animator.SetBool("isWalking", true);
+            animator.SetBool("isWalking", true); // Animasyonu ba�lat
 
-            // Sağ tarafa bak
+            // Sa� tarafa do�ru hareket
             if (movement.x > 0)
             {
-                transform.localScale = new Vector3(1, 1, 1);
+                transform.localScale = new Vector3(3, 3, 3); // Normal y�n
             }
-            // Sol tarafa bak
+            // Sol tarafa do�ru hareket
             else if (movement.x < 0)
             {
-                transform.localScale = new Vector3(-1, 1, 1);
+                transform.localScale = new Vector3(-3, 3, 3); // Ters y�n
             }
         }
         else
         {
-            animator.SetBool("isWalking", false);
+            animator.SetBool("isWalking", false); // Animasyonu durdur
         }
-
-        // Zıplama animasyonunu kontrol et
-        animator.SetBool("isJumping", !isGrounded);
     }
 
+    // Fizik i�lemleri burada yap�l�r
     void FixedUpdate()
     {
-        // Hareketi uygula
+        // Rigidbody ile kediyi hareket ettir
         rb.linearVelocity = new Vector2(movement.x * moveSpeed, rb.linearVelocity.y);
-
-        // Yerde olup olmadığını kontrol et
-        isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
-    }
-
-    void Jump()
-    {
-        // Zıplama kuvveti uygula
-        rb.AddForce(new Vector2(0f, jumpForce), ForceMode2D.Impulse);
     }
 }
