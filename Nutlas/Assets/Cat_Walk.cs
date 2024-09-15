@@ -2,45 +2,52 @@ using UnityEngine;
 
 public class Cat_Walk : MonoBehaviour
 {
-    private Animator animator;
-    private Vector2 movement;
+    private Animator animator;   // Animator bileï¿½eni
+    private Rigidbody2D rb;      // Rigidbody2D bileï¿½eni
+    private Vector2 movement;    // Hareket vektï¿½rï¿½
+
+    public float moveSpeed = 5f; // Hareket hï¿½zï¿½
 
     // Start is called before the first frame update
     void Start()
     {
-        // Animator bileþenine eriþiyoruz
+        // Rigidbody ve Animator bileï¿½enlerini al
+        rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        // Hareket giriþlerini almak
-        float moveX = Input.GetAxisRaw("Horizontal");
-        movement = new Vector2(moveX, 0); // Sadece x yönünde hareket
+        // Kullanï¿½cï¿½dan yatay eksende giriï¿½ al
+        movement.x = Input.GetAxisRaw("Horizontal");
 
-        // Eðer x yönünde hareket varsa animasyonu baþlat
+        // Yï¿½rï¿½yï¿½ï¿½ animasyonunu kontrol et
         if (movement.x != 0)
         {
-            animator.SetBool("isWalking", true); // Yürüyüþ animasyonunu baþlat
+            animator.SetBool("isWalking", true); // Animasyonu baï¿½lat
 
-            // Kedi saða gidiyorsa normal, sola gidiyorsa ters yön bakacak þekilde ayarla
+            // Saï¿½ tarafa doï¿½ru hareket
             if (movement.x > 0)
             {
-                transform.localScale = new Vector3(1, 1, 1); // Saða bak
+                transform.localScale = new Vector3(1, 1, 1); // Normal yï¿½n
             }
+            // Sol tarafa doï¿½ru hareket
             else if (movement.x < 0)
             {
-                transform.localScale = new Vector3(-1, 1, 1); // Sola bak
+                transform.localScale = new Vector3(-1, 1, 1); // Ters yï¿½n
             }
         }
         else
         {
-            // Hareket yoksa yürüyüþ animasyonunu durdur
-            animator.SetBool("isWalking", false);
+            animator.SetBool("isWalking", false); // Animasyonu durdur
         }
+    }
 
-        // Kediyi hareket ettir
-        transform.Translate(movement * Time.deltaTime * 5f); // Hareket hýzý 5
+    // Fizik iï¿½lemleri burada yapï¿½lï¿½r
+    void FixedUpdate()
+    {
+        // Rigidbody ile kediyi hareket ettir
+        rb.linearVelocity = new Vector2(movement.x * moveSpeed, rb.linearVelocity.y);
     }
 }
